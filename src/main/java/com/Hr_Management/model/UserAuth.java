@@ -48,6 +48,8 @@ public class UserAuth {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable=false)
 	private Role role;
+	
+
 
 	public long getId() {
 		return id;

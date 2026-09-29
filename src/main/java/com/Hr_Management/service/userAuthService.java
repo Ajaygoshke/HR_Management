@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.Hr_Management.Security.JwtToken;
 import com.Hr_Management.model.UserAuth;
 import com.Hr_Management.repositry.UserAuthrepo;
 
@@ -12,11 +13,13 @@ import com.Hr_Management.repositry.UserAuthrepo;
 public class userAuthService {
 
 	private final UserAuthrepo repo;
+	private final JwtToken jwttoken;
 	
 	private BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
 	
-	public userAuthService (UserAuthrepo repo) {
+	public userAuthService (UserAuthrepo repo,JwtToken jwttoken) {
 		this.repo=repo;
+		this.jwttoken=jwttoken;
 	}
 	
 	public UserAuth addEmp(UserAuth userAuth) {
@@ -30,10 +33,10 @@ public class userAuthService {
 		
 		UserAuth userAuth=repo.findByUserEmail(userEmail).orElse(null);
 		if(userAuth==null) return "User Not Found";
-		if(encoder.matches(password, userAuth.getPassword())) {
-			return"Login Successful";
+		if(!encoder.matches(password, userAuth.getPassword())) {
+			return "Invalid coardincationsal";
 		}
-		return "Invalid coardincationsal";
+		return jwttoken.generatedToken(userAuth.getUserEmail(), userAuth.getRole());
 	}
 
 }
