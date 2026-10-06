@@ -2,6 +2,7 @@ package com.Hr_Management.controller;
 
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,10 @@ public class UserAuthController {
 	public UserAuthController(userAuthService service) {
 		this.service=service;
 	}
-	
+	@GetMapping("/employees")
+	public String employees() {
+	    return "Employee data";
+	}
 	
 	@PostMapping("/add")
 	public UserAuth postMethodName(@RequestBody UserAuth userAuth) {
