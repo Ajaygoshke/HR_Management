@@ -24,7 +24,7 @@ public class UserAuthController {
 	}
 	@GetMapping("/employees")
 	public String employees() {
-	    return "Employee data";
+	    return "employess";
 	}
 	
 	@PostMapping("/add")

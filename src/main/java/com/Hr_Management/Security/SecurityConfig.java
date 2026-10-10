@@ -1,18 +1,23 @@
+
 package com.Hr_Management.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
@@ -31,17 +36,22 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
-                // Login does not require JWT
+                // Login is public
                 .requestMatchers("/login").permitAll()
 
-                // Registration does not require JWT
+                // Registration is public for now
                 .requestMatchers("/add").permitAll()
 
-                // Everything else requires JWT
-                .requestMatchers("/employees").hasRole("ADMIN")
+                // Only ADMIN can create employees
+                .requestMatchers(
+                    HttpMethod.POST, "/employees"
+                ).hasRole("ADMIN")
+
+                // All other requests require authentication
+                .anyRequest().authenticated()
             )
 
-            // Run JWT filter before Spring's username/password filter
+            // Validate JWT before processing authentication
             .addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class
